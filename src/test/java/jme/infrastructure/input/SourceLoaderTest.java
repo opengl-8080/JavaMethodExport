@@ -143,7 +143,7 @@ public class SourceLoaderTest {
             // verify
             List<String> packageNames = targetPackages.getPackageNames();
 
-            assertThat(packageNames).contains("foo", "foo.bar", "");
+            assertThat(packageNames).contains("foo", "foo.bar", "", "foo.fizz");
         }
 
         @Test
@@ -160,6 +160,9 @@ public class SourceLoaderTest {
 
             TargetPackage fooBarPackage = targetPackages.find(new PackageName("foo.bar")).orElseThrow(Exception::new);
             fooBarPackage.find(new TypeName("BarClass")).orElseThrow(Exception::new);
+
+            TargetPackage fooFizzPackage = targetPackages.find(new PackageName("foo.fizz")).orElseThrow(Exception::new);
+            fooFizzPackage.find(new TypeName("FizzClass")).orElseThrow(Exception::new);
         }
     }
 
