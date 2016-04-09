@@ -17,6 +17,7 @@ public class MethodParametersTest {
                 createMethodParameter("int")
         ));
 
+
         // exercise
         String actual = parameters.toString();
 

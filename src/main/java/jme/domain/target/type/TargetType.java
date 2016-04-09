@@ -3,6 +3,8 @@ package jme.domain.target.type;
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.method.TargetMethods;
 
+import java.io.File;
+
 public class TargetType {
     private final TypeName name;
     private final TargetMethods methods = new TargetMethods();
@@ -43,5 +45,9 @@ public class TargetType {
 
     public TargetMethods getMethods() {
         return methods;
+    }
+
+    public File resolveDir(File baseDir) {
+        return new File(baseDir, this.name.toString());
     }
 }

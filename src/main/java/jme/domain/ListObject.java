@@ -1,9 +1,10 @@
 package jme.domain;
 
-import jme.domain.target.method.TargetMethod;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ListObject<T> {
     protected List<T> list = new ArrayList<>();
@@ -37,4 +38,7 @@ public class ListObject<T> {
         return this.list.get(0);
     }
 
+    public void forEach(Consumer<T> consumer) {
+        this.list.forEach(consumer);
+    }
 }

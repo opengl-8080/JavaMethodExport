@@ -4,6 +4,7 @@ import jme.domain.target.type.TargetType;
 import jme.domain.target.type.TargetTypes;
 import jme.domain.target.type.TypeName;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,5 +58,10 @@ public class TargetPackage {
 
     public PackageName getPackageName() {
         return this.name;
+    }
+
+    public File resolveDir(File baseDir) {
+        String pkg = this.getPackageName().toString();
+        return new File(baseDir, pkg.replace(".", "/"));
     }
 }
