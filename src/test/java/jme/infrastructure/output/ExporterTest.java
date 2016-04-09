@@ -136,7 +136,7 @@ public class ExporterTest {
         exporter.export(packages);
 
         // verify
-        File bar = new File(this.rootDir, "foo/bar/FooClass/method(int_String).txt");
+        File bar = new File(this.rootDir, "foo/bar/FooClass/method(int_String).java");
         assertThat(bar)
                 .usingCharset("UTF-8")
                 .isFile()

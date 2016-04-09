@@ -42,7 +42,7 @@ public class Exporter {
     }
 
     private void exportMethodInfo(TargetMethod method, File classFileDir) {
-        String methodFileName = method.getSignature().toString() + ".txt";
+        String methodFileName = method.getSignature().toString() + ".java";
         File methodFile = new File(classFileDir, methodFileName);
 
         try {
