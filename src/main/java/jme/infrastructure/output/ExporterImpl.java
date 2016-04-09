@@ -2,7 +2,6 @@ package jme.infrastructure.output;
 
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.pkg.TargetPackage;
-import jme.domain.target.pkg.TargetPackages;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,20 +20,13 @@ public class ExporterImpl implements Exporter {
         this.rootDir = rootDir;
     }
 
-    @Deprecated
-    public void export(TargetPackages packages) {
-        packages.forEach(pkg -> {
-            File pkgDir = pkg.isRoot() ? this.rootDir : pkg.resolveDir(this.rootDir);
-            pkgDir.mkdirs();
-
-            this.exportClassInfo(pkg, pkgDir);
-        });
-    }
-
     @Override
-    public void exportClassInfo(TargetPackage pkg, File packageDir) {
+    public void export(TargetPackage pkg) {
+        File pkgDir = pkg.isRoot() ? this.rootDir : pkg.resolveDir(this.rootDir);
+        pkgDir.mkdirs();
+
         pkg.getTargetTypes().forEach(type -> {
-            File classFileDir = type.resolveDir(packageDir);
+            File classFileDir = type.resolveDir(pkgDir);
             classFileDir.mkdirs();
 
             type.getMethods().forEach(method -> {

@@ -76,7 +76,7 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
         }
         TargetPackage pkg = this.currentPackageStack.pop();
 
-        this.exporter.exportClassInfo(pkg, dir.toFile());
+        this.exporter.export(pkg);
 
         return FileVisitResult.CONTINUE;
     }

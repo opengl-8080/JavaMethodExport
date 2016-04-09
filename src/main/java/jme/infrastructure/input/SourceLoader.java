@@ -1,6 +1,5 @@
 package jme.infrastructure.input;
 
-import jme.domain.target.pkg.TargetPackages;
 import jme.infrastructure.output.Exporter;
 
 import java.io.IOException;

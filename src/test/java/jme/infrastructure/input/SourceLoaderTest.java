@@ -37,8 +37,8 @@ public class SourceLoaderTest {
         private List<Param> list = new ArrayList<>();
 
         @Override
-        public void exportClassInfo(TargetPackage pkg, File dir) {
-            this.list.add(new Param(pkg, dir));
+        public void export(TargetPackage pkg) {
+            this.list.add(new Param(pkg));
         }
 
         public TargetPackage firstPackage() {
@@ -63,11 +63,9 @@ public class SourceLoaderTest {
 
     private static class Param {
         private final TargetPackage pkg;
-        private final File dir;
 
-        private Param(TargetPackage pkg, File dir) {
+        private Param(TargetPackage pkg) {
             this.pkg = pkg;
-            this.dir = dir;
         }
     }
 
@@ -90,13 +88,9 @@ public class SourceLoaderTest {
             loader.load();
 
             // verify
-            assertThat(exporter.list).as("パッケージ名")
+            assertThat(exporter.list)
                     .extracting(p -> p.pkg.getPackageName())
                     .contains(PackageName.ROOT);
-
-            assertThat(exporter.list).as("基準ディレクトリ")
-                    .extracting(p -> p.dir)
-                    .contains(baseDir);
         }
 
         @Test

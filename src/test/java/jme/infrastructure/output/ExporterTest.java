@@ -8,7 +8,6 @@ import jme.domain.target.method.ParameterTypes;
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.pkg.PackageName;
 import jme.domain.target.pkg.TargetPackage;
-import jme.domain.target.pkg.TargetPackages;
 import jme.domain.target.type.TargetType;
 import jme.domain.target.type.TargetTypes;
 import jme.domain.target.type.TypeName;
@@ -43,11 +42,8 @@ public class ExporterTest {
         // setup
         TargetPackage pkg = createPackage(PackageName.ROOT.toString());
 
-        TargetPackages packages = new TargetPackages();
-        packages.add(pkg);
-
         // exercise
-        exporter.export(packages);
+        exporter.export(pkg);
 
         // verify
         assertThat(this.rootDir.list()).isEmpty();
@@ -58,11 +54,8 @@ public class ExporterTest {
         // setup
         TargetPackage pkg = createPackage("foo");
 
-        TargetPackages packages = new TargetPackages();
-        packages.add(pkg);
-
         // exercise
-        exporter.export(packages);
+        exporter.export(pkg);
 
         // verify
         File foo = new File(this.rootDir, "foo");
@@ -74,11 +67,8 @@ public class ExporterTest {
         // setup
         TargetPackage pkg = createPackage("foo.bar");
 
-        TargetPackages packages = new TargetPackages();
-        packages.add(pkg);
-
         // exercise
-        exporter.export(packages);
+        exporter.export(pkg);
 
         // verify
         File bar = new File(this.rootDir, "foo/bar");
@@ -91,11 +81,8 @@ public class ExporterTest {
         TargetPackage pkg = createPackage(PackageName.ROOT.toString());
         addClass(pkg, "FooClass");
 
-        TargetPackages packages = new TargetPackages();
-        packages.add(pkg);
-
         // exercise
-        exporter.export(packages);
+        exporter.export(pkg);
 
         // verify
         File bar = new File(this.rootDir, "FooClass");
@@ -108,11 +95,8 @@ public class ExporterTest {
         TargetPackage pkg = createPackage("foo.bar");
         addClass(pkg, "FooClass");
 
-        TargetPackages packages = new TargetPackages();
-        packages.add(pkg);
-
         // exercise
-        exporter.export(packages);
+        exporter.export(pkg);
 
         // verify
         File bar = new File(this.rootDir, "foo/bar/FooClass");
@@ -128,11 +112,8 @@ public class ExporterTest {
         TargetMethod method = createMethod("method", "メソッドボディ", "int", "String");
         fooClass.add(method);
 
-        TargetPackages packages = new TargetPackages();
-        packages.add(pkg);
-
         // exercise
-        exporter.export(packages);
+        exporter.export(pkg);
 
         // verify
         File bar = new File(this.rootDir, "foo/bar/FooClass/method(int_String).java");
