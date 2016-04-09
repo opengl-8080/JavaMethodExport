@@ -1,6 +1,5 @@
 package jme;
 
-import jme.domain.target.pkg.TargetPackages;
 import jme.infrastructure.input.SourceLoader;
 import jme.infrastructure.output.ExporterImpl;
 import org.springframework.beans.factory.annotation.Value;

@@ -6,7 +6,6 @@ import jme.domain.target.method.MethodSignature;
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.pkg.PackageName;
 import jme.domain.target.pkg.TargetPackage;
-import jme.domain.target.pkg.TargetPackages;
 import jme.domain.target.type.TargetType;
 import jme.domain.target.type.TypeName;
 import jme.infrastructure.output.Exporter;
@@ -222,12 +221,5 @@ public class SourceLoaderTest {
         MethodBody body = method.getBody();
         String expectedBody = Arrays.stream(expectedBodies).map(s -> s + "\n").collect(joining());
         assertThat(body.toString()).as("body").isEqualTo(expectedBody);
-    }
-
-    private static TargetMethod getFirstMethod(TargetPackages packages) {
-        return packages
-                .first().getTargetTypes()
-                .first().getMethods()
-                .first();
     }
 }
