@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 @SpringBootApplication
@@ -27,8 +29,12 @@ public class JmeMain {
     private String inDir;
     @Value("${out}")
     private String outDir;
+    @Value("${charset}")
+    private String charset;
 
     private void execute() {
+        _charset = Charset.forName(this.charset);
+
         SourceLoader loader = new SourceLoader();
         loader.setBaseDir(Paths.get(this.inDir));
 
@@ -36,5 +42,11 @@ public class JmeMain {
         loader.setExporter(exporter);
 
         loader.load();
+    }
+
+    private static Charset _charset = StandardCharsets.UTF_8;
+
+    public static Charset getCharset() {
+        return _charset;
     }
 }

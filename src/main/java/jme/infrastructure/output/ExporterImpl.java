@@ -1,12 +1,12 @@
 package jme.infrastructure.output;
 
+import jme.JmeMain;
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.pkg.TargetPackage;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class ExporterImpl implements Exporter {
@@ -40,7 +40,7 @@ public class ExporterImpl implements Exporter {
         File methodFile = new File(classFileDir, methodFileName);
 
         try {
-            Files.write(methodFile.toPath(), method.getBody().toString().getBytes(StandardCharsets.UTF_8));
+            Files.write(methodFile.toPath(), method.getBody().toString().getBytes(JmeMain.getCharset()));
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

@@ -42,9 +42,7 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        String src = this.toString(file);
-
-        ASTNodeVisitor nodeVisitor = this.parse(src);
+        ASTNodeVisitor nodeVisitor = this.parse(file);
 
         this.currentPackageStack.peek().addAll(nodeVisitor.getTypes());
 
@@ -59,11 +57,13 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
         return new String(out.toByteArray());
     }
 
-    private ASTNodeVisitor parse(String src) {
+    private ASTNodeVisitor parse(Path sourceFile) throws IOException {
+        String sourceText = this.toString(sourceFile);
+
         ASTParser parser = ASTParser.newParser(AST.JLS8);
-        parser.setSource(src.toCharArray());
+        parser.setSource(sourceText.toCharArray());
         CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
-        ASTNodeVisitor nodeVisitor = new ASTNodeVisitor();
+        ASTNodeVisitor nodeVisitor = new ASTNodeVisitor(unit, sourceFile);
         unit.accept(nodeVisitor);
 
         return nodeVisitor;

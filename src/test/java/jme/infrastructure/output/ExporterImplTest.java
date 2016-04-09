@@ -1,5 +1,6 @@
 package jme.infrastructure.output;
 
+import jme.JmeMain;
 import jme.domain.target.method.MethodBody;
 import jme.domain.target.method.MethodName;
 import jme.domain.target.method.MethodSignature;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class ExporterTest {
+public class ExporterImplTest {
 
     @Rule
     public TemporaryFolder tmpDir = new TemporaryFolder();
@@ -118,7 +119,7 @@ public class ExporterTest {
         // verify
         File bar = new File(this.rootDir, "foo/bar/FooClass/method(int_String).java");
         assertThat(bar)
-                .usingCharset("UTF-8")
+                .usingCharset(JmeMain.getCharset().name())
                 .isFile()
                 .hasContent("メソッドボディ");
     }

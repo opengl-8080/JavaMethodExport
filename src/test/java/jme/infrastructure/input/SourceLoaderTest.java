@@ -112,9 +112,9 @@ public class SourceLoaderTest {
             TargetMethod method = exporter.firstMethod();
 
             assertTargetMethod(method, "publicMethod(int_String_long)",
-                    "public String publicMethod(int i,String s,long l){",
-                    "  return \"test\";",
-                    "}"
+                    "    public String publicMethod(int i, String s, long l) {",
+                    "        return \"test\";",
+                    "    }"
             );
         }
     }
@@ -133,8 +133,7 @@ public class SourceLoaderTest {
             TargetMethod method = exporter.firstMethod();
 
             assertTargetMethod(method, "privateMethod()",
-                    "private void privateMethod(){",
-                    "}"
+                    "    private void privateMethod() {}"
             );
         }
     }
@@ -169,8 +168,7 @@ public class SourceLoaderTest {
             TargetMethod method = type.getMethods().first();
 
             assertTargetMethod(method, "innerClassMethod()",
-                    "public void innerClassMethod(){",
-                    "}"
+                    "        public void innerClassMethod() {}"
             );
         }
     }
@@ -219,7 +217,7 @@ public class SourceLoaderTest {
         assertThat(signature.toString()).as("signature").isEqualTo(expectedSignature);
 
         MethodBody body = method.getBody();
-        String expectedBody = Arrays.stream(expectedBodies).map(s -> s + "\n").collect(joining());
+        String expectedBody = Arrays.stream(expectedBodies).map(s -> s + "\r\n").collect(joining());
         assertThat(body.toString()).as("body").isEqualTo(expectedBody);
     }
 }
