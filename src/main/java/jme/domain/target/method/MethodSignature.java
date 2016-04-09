@@ -2,19 +2,19 @@ package jme.domain.target.method;
 
 public class MethodSignature {
     private final MethodName name;
-    private final MethodParameters parameters;
+    private final ParameterTypes types;
 
-    public MethodSignature(MethodName name, MethodParameters parameters) {
-        if (name == null || parameters == null) {
-            throw new NullPointerException("name or parameters is null. (name=" + name + ", parameters=" + parameters + ")");
+    public MethodSignature(MethodName name, ParameterTypes types) {
+        if (name == null || types == null) {
+            throw new NullPointerException("name or types is null. (name=" + name + ", types=" + types + ")");
         }
         this.name = name;
-        this.parameters = parameters;
+        this.types = types;
     }
 
     @Override
     public String toString() {
-        return this.name + "(" + this.parameters + ")";
+        return this.name + "(" + this.types + ")";
     }
 
     @Override
@@ -25,14 +25,14 @@ public class MethodSignature {
         MethodSignature that = (MethodSignature) o;
 
         if (!name.equals(that.name)) return false;
-        return parameters.equals(that.parameters);
+        return types.equals(that.types);
 
     }
 
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + parameters.hashCode();
+        result = 31 * result + types.hashCode();
         return result;
     }
 }

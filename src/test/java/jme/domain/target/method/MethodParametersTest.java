@@ -13,8 +13,8 @@ public class MethodParametersTest {
     @Test
     public void パラメータが１つの場合() throws Exception {
         // setup
-        MethodParameters parameters = new MethodParameters(Arrays.asList(
-                createMethodParameter("int", "integer")
+        ParameterTypes parameters = new ParameterTypes(Arrays.asList(
+                createMethodParameter("int")
         ));
 
         // exercise
@@ -27,9 +27,9 @@ public class MethodParametersTest {
     @Test
     public void パラメータが２つの場合() throws Exception {
         // setup
-        MethodParameters parameters = new MethodParameters(Arrays.asList(
-            createMethodParameter("int", "integer"),
-            createMethodParameter("String", "string")
+        ParameterTypes parameters = new ParameterTypes(Arrays.asList(
+            createMethodParameter("int"),
+            createMethodParameter("String")
         ));
 
         // exercise
@@ -48,15 +48,13 @@ public class MethodParametersTest {
         ex.expect(IllegalArgumentException.class);
 
         // exercise
-        new MethodParameters(Arrays.asList(
-            createMethodParameter("int", "int"),
+        new ParameterTypes(Arrays.asList(
+            createMethodParameter("int"),
             null
         ));
     }
 
-    private MethodParameter createMethodParameter(String type, String name) {
-        ParameterType _type = new ParameterType(type);
-        ParameterName _name = new ParameterName(name);
-        return new MethodParameter(_type, _name);
+    private ParameterType createMethodParameter(String type) {
+        return new ParameterType(type);
     }
 }

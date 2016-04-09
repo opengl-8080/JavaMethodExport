@@ -2,11 +2,9 @@ package jme.infrastructure.input;
 
 import jme.domain.target.method.MethodBody;
 import jme.domain.target.method.MethodName;
-import jme.domain.target.method.MethodParameter;
-import jme.domain.target.method.MethodParameters;
 import jme.domain.target.method.MethodSignature;
-import jme.domain.target.method.ParameterName;
 import jme.domain.target.method.ParameterType;
+import jme.domain.target.method.ParameterTypes;
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.type.TargetType;
 import jme.domain.target.type.TargetTypes;
@@ -61,28 +59,25 @@ public class ASTNodeVisitor extends ASTVisitor {
     }
 
     private MethodSignature toMethodSignature(MethodDeclaration node) {
-        MethodParameters parameters = this.toMethodParameters(node);
+        ParameterTypes types = this.toMethodParameters(node);
         MethodName methodName = new MethodName(node.getName().toString());
 
-        return new MethodSignature(methodName, parameters);
+        return new MethodSignature(methodName, types);
     }
 
-    private MethodParameters toMethodParameters(MethodDeclaration node) {
+    private ParameterTypes toMethodParameters(MethodDeclaration node) {
         @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> rawParameters = node.parameters();
 
-        List<MethodParameter> list = rawParameters.stream()
+        List<ParameterType> list = rawParameters.stream()
                 .map(this::toMethodParameter)
                 .collect(toList());
 
-        return new MethodParameters(list);
+        return new ParameterTypes(list);
     }
 
-    private MethodParameter toMethodParameter(SingleVariableDeclaration parameter) {
-        ParameterType type = new ParameterType(parameter.getType().toString());
-        ParameterName name = new ParameterName(parameter.getName().toString());
-
-        return new MethodParameter(type, name);
+    private ParameterType toMethodParameter(SingleVariableDeclaration parameter) {
+        return new ParameterType(parameter.getType().toString());
     }
 
     public TargetTypes getTypes() {
