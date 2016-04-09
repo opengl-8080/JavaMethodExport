@@ -5,6 +5,7 @@ import jme.domain.target.method.MethodBody;
 import jme.domain.target.method.MethodSignature;
 import jme.domain.target.method.TargetMethod;
 import jme.domain.target.method.TargetMethods;
+import jme.domain.target.pkg.PackageName;
 import jme.domain.target.pkg.TargetPackage;
 import jme.domain.target.pkg.TargetPackages;
 import jme.domain.target.type.TargetType;
@@ -145,8 +146,23 @@ public class SourceLoaderTest {
             assertThat(packageNames).contains("foo", "foo.bar", "");
         }
 
+        @Test
+        public void 各階層のクラスが読み込まれている() throws Exception {
+            // exercise
+            TargetPackages targetPackages = loader.load();
 
+            // verify
+            TargetPackage rootPackage = targetPackages.find(PackageName.ROOT).orElseThrow(Exception::new);
+            rootPackage.find(new TypeName("RootClass")).orElseThrow(Exception::new);
+
+            TargetPackage fooPackage = targetPackages.find(new PackageName("foo")).orElseThrow(Exception::new);
+            fooPackage.find(new TypeName("FooClass")).orElseThrow(Exception::new);
+
+            TargetPackage fooBarPackage = targetPackages.find(new PackageName("foo.bar")).orElseThrow(Exception::new);
+            fooBarPackage.find(new TypeName("BarClass")).orElseThrow(Exception::new);
+        }
     }
+
 
     private static void assertTargetMethod(TargetMethod method, String expectedSignature, String... expectedBodies) {
         MethodSignature signature = method.getSignature();
