@@ -1,12 +1,24 @@
 package jme.domain.target.type;
 
-import jme.domain.ListValueObject;
+import jme.domain.ListObject;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class TargetTypes extends ListValueObject<TargetType> {
+public class TargetTypes extends ListObject<TargetType> {
 
-    public TargetTypes(List<TargetType> list) {
-        super(list);
+    public List<String> getTypeNames() {
+        return this.list.stream()
+                .map(type -> type.getName().toString())
+                .collect(Collectors.toList());
+    }
+
+    public Optional<TargetType> find(TypeName name) {
+        if (name == null) {
+            throw new NullPointerException("name is null.");
+        }
+
+        return this.list.stream().filter(type -> type.getName().equals(name)).findFirst();
     }
 }

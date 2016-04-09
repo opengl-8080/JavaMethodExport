@@ -13,8 +13,8 @@ public class MethodSignatureTest {
         // setup
         MethodName methodName = new MethodName("myMethod");
         MethodParameters parameters = new MethodParameters(Arrays.asList(
-                createMethodParameter(int.class, "integer"),
-                createMethodParameter(long.class, "long")
+                createMethodParameter("int", "integer"),
+                createMethodParameter("long", "long")
         ));
 
         MethodSignature signature = new MethodSignature(methodName, parameters);
@@ -26,7 +26,7 @@ public class MethodSignatureTest {
         assertThat(actual).isEqualTo("myMethod(int_long)");
     }
 
-    private MethodParameter createMethodParameter(Class<?> type, String name) {
+    private MethodParameter createMethodParameter(String type, String name) {
         ParameterType _type = new ParameterType(type);
         ParameterName _name = new ParameterName(name);
         return new MethodParameter(_type, _name);

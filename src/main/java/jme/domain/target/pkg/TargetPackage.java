@@ -1,17 +1,33 @@
 package jme.domain.target.pkg;
 
+import jme.domain.target.type.TargetType;
 import jme.domain.target.type.TargetTypes;
+import jme.domain.target.type.TypeName;
+
+import java.util.List;
+import java.util.Optional;
 
 public class TargetPackage {
     private final PackageName name;
-    private final TargetTypes types;
+    private TargetTypes types = new TargetTypes();
 
-    public TargetPackage(PackageName name, TargetTypes types) {
-        if (name == null || types == null) {
-            throw new NullPointerException("name or types is null. (name=" + name + ", types=" + types + ")");
+    public TargetPackage(PackageName name) {
+        if (name == null) {
+            throw new NullPointerException("name is null.");
         }
         this.name = name;
-        this.types = types;
+    }
+
+    public void addAll(TargetTypes types) {
+        this.types.addAll(types);
+    }
+
+    public List<String> getTypeNames() {
+        return this.types.getTypeNames();
+    }
+
+    public Optional<TargetType> find(TypeName name) {
+        return this.types.find(name);
     }
 
     @Override
@@ -28,5 +44,18 @@ public class TargetPackage {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+
+    public boolean isRoot() {
+        return this.name.isRoot();
+    }
+
+    public TargetTypes getTargetTypes() {
+        return this.types;
+    }
+
+    public PackageName getPackageName() {
+        return this.name;
     }
 }

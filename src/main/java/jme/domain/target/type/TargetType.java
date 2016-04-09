@@ -1,17 +1,24 @@
 package jme.domain.target.type;
 
+import jme.domain.target.method.TargetMethod;
 import jme.domain.target.method.TargetMethods;
 
 public class TargetType {
     private final TypeName name;
-    private final TargetMethods methods;
+    private final TargetMethods methods = new TargetMethods();
 
-    public TargetType(TypeName name, TargetMethods methods) {
-        if (name == null || methods == null) {
-            throw new NullPointerException("name or methods is null. (name=" + name + ", methods=" + methods + ")");
+    public TargetType(TypeName name) {
+        if (name == null) {
+            throw new NullPointerException("name is null.");
         }
         this.name = name;
-        this.methods = methods;
+    }
+
+    public void add(TargetMethod method) {
+        if (method == null) {
+            throw new NullPointerException("method is null.");
+        }
+        this.methods.add(method);
     }
 
     @Override
@@ -28,5 +35,13 @@ public class TargetType {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    public TypeName getName() {
+        return name;
+    }
+
+    public TargetMethods getMethods() {
+        return methods;
     }
 }
