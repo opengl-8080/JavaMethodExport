@@ -2,7 +2,7 @@ package jme.infrastructure.input;
 
 import jme.domain.target.pkg.PackageName;
 import jme.domain.target.pkg.TargetPackage;
-import jme.domain.target.pkg.TargetPackages;
+import jme.infrastructure.output.Exporter;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -19,12 +19,13 @@ import java.util.Stack;
 
 public class FileVisitor extends SimpleFileVisitor<Path> {
     private final Path rootDir;
-    private TargetPackages packages = new TargetPackages();
+    private final Exporter exporter;
     private Stack<TargetPackage> currentPackageStack = new Stack<>();
     private PackageNameStack packageNameStack = new PackageNameStack();
 
-    public FileVisitor(Path rootDir) {
+    public FileVisitor(Path rootDir, Exporter exporter) {
         this.rootDir = rootDir;
+        this.exporter = exporter;
     }
 
     @Override
@@ -74,11 +75,9 @@ public class FileVisitor extends SimpleFileVisitor<Path> {
             this.packageNameStack.pop();
         }
         TargetPackage pkg = this.currentPackageStack.pop();
-        this.packages.add(pkg);
-        return FileVisitResult.CONTINUE;
-    }
 
-    public TargetPackages getPackages() {
-        return packages;
+        this.exporter.exportClassInfo(pkg, dir.toFile());
+
+        return FileVisitResult.CONTINUE;
     }
 }

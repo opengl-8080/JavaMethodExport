@@ -2,7 +2,7 @@ package jme;
 
 import jme.domain.target.pkg.TargetPackages;
 import jme.infrastructure.input.SourceLoader;
-import jme.infrastructure.output.Exporter;
+import jme.infrastructure.output.ExporterImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -33,9 +33,9 @@ public class JmeMain {
         SourceLoader loader = new SourceLoader();
         loader.setBaseDir(Paths.get(this.inDir));
 
-        TargetPackages packages = loader.load();
+        ExporterImpl exporter = new ExporterImpl(new File(this.outDir));
+        loader.setExporter(exporter);
 
-        Exporter exporter = new Exporter(new File(this.outDir));
-        exporter.export(packages);
+        loader.load();
     }
 }

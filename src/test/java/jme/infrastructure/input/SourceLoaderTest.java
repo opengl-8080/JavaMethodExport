@@ -4,21 +4,23 @@ import de.bechte.junit.runners.context.HierarchicalContextRunner;
 import jme.domain.target.method.MethodBody;
 import jme.domain.target.method.MethodSignature;
 import jme.domain.target.method.TargetMethod;
-import jme.domain.target.method.TargetMethods;
 import jme.domain.target.pkg.PackageName;
 import jme.domain.target.pkg.TargetPackage;
 import jme.domain.target.pkg.TargetPackages;
 import jme.domain.target.type.TargetType;
-import jme.domain.target.type.TargetTypes;
 import jme.domain.target.type.TypeName;
+import jme.infrastructure.output.Exporter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.*;
@@ -28,30 +30,82 @@ public class SourceLoaderTest {
 
     private static final Path BASE_PATH = Paths.get("./src/test/java/jme/infrastructure/input/source_loader_test");
     private SourceLoader loader = new SourceLoader();
+    private TestExporter exporter = new TestExporter();
+
+    private static class TestExporter implements Exporter {
+
+        private List<Param> list = new ArrayList<>();
+
+        @Override
+        public void exportClassInfo(TargetPackage pkg, File dir) {
+            this.list.add(new Param(pkg, dir));
+        }
+
+        public TargetPackage firstPackage() {
+            return this.list.get(0).pkg;
+        }
+
+        public TargetType firstType() {
+            return this.firstPackage().getTargetTypes().first();
+        }
+
+        public TargetMethod firstMethod() {
+            return this.firstType().getMethods().first();
+        }
+
+        public Optional<TargetPackage> find(PackageName name) {
+            return this.list.stream()
+                    .map(param -> param.pkg)
+                    .filter(pkg -> pkg.getPackageName().equals(name))
+                    .findFirst();
+        }
+    }
+
+    private static class Param {
+        private final TargetPackage pkg;
+        private final File dir;
+
+        private Param(TargetPackage pkg, File dir) {
+            this.pkg = pkg;
+            this.dir = dir;
+        }
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        loader.setExporter(exporter);
+    }
 
     public class 基本テスト {
+        private File baseDir = BASE_PATH.resolve("load_class").toFile();
+
         @Before
         public void setUp() throws Exception {
-            loader.setBaseDir(BASE_PATH.resolve("load_class"));
+            loader.setBaseDir(baseDir.toPath());
         }
 
         @Test
         public void ルートのパッケージが読み込める() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            assertThat(targetPackages.first().isRoot()).isEqualTo(true);
+            assertThat(exporter.list).as("パッケージ名")
+                    .extracting(p -> p.pkg.getPackageName())
+                    .contains(PackageName.ROOT);
+
+            assertThat(exporter.list).as("基準ディレクトリ")
+                    .extracting(p -> p.dir)
+                    .contains(baseDir);
         }
 
         @Test
         public void ソースファイルが読み込めている() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            TargetTypes targetTypes = targetPackages.first().getTargetTypes();
-            TargetType type = targetTypes.first();
+            TargetType type = exporter.firstType();
 
             assertThat(type.getName().toString()).isEqualTo("LoadClass");
         }
@@ -59,10 +113,10 @@ public class SourceLoaderTest {
         @Test
         public void publicメソッドが読み込めている() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            TargetMethod method = getFirstMethod(targetPackages);
+            TargetMethod method = exporter.firstMethod();
 
             assertTargetMethod(method, "publicMethod(int_String_long)",
                     "public String publicMethod(int i,String s,long l){",
@@ -80,10 +134,10 @@ public class SourceLoaderTest {
             loader.setBaseDir(BASE_PATH.resolve("private_method"));
 
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            TargetMethod method = getFirstMethod(targetPackages);
+            TargetMethod method = exporter.firstMethod();
 
             assertTargetMethod(method, "privateMethod()",
                     "private void privateMethod(){",
@@ -102,10 +156,10 @@ public class SourceLoaderTest {
         @Test
         public void インナークラスも読み込めていること() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            TargetPackage pkg = targetPackages.first();
+            TargetPackage pkg = exporter.firstPackage();
             List<String> typeNames = pkg.getTypeNames();
 
             assertThat(typeNames).contains("OuterClass", "OuterClass$InnerClass");
@@ -114,10 +168,10 @@ public class SourceLoaderTest {
         @Test
         public void インナークラスのメソッドも読み込めていること() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            TargetPackage pkg = targetPackages.first();
+            TargetPackage pkg = exporter.firstPackage();
             TargetType type = pkg.find(new TypeName("OuterClass$InnerClass")).orElseThrow(Exception::new);
             TargetMethod method = type.getMethods().first();
 
@@ -138,30 +192,30 @@ public class SourceLoaderTest {
         @Test
         public void 各パッケージが読み込める() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            List<String> packageNames = targetPackages.getPackageNames();
-
-            assertThat(packageNames).contains("foo", "foo.bar", "", "foo.fizz");
+            assertThat(exporter.list)
+                    .extracting(param -> param.pkg.getPackageName().toString())
+                    .contains("foo", "foo.bar", "", "foo.fizz");
         }
 
         @Test
         public void 各階層のクラスが読み込まれている() throws Exception {
             // exercise
-            TargetPackages targetPackages = loader.load();
+            loader.load();
 
             // verify
-            TargetPackage rootPackage = targetPackages.find(PackageName.ROOT).orElseThrow(Exception::new);
+            TargetPackage rootPackage = exporter.find(PackageName.ROOT).orElseThrow(Exception::new);
             rootPackage.find(new TypeName("RootClass")).orElseThrow(Exception::new);
 
-            TargetPackage fooPackage = targetPackages.find(new PackageName("foo")).orElseThrow(Exception::new);
+            TargetPackage fooPackage = exporter.find(new PackageName("foo")).orElseThrow(Exception::new);
             fooPackage.find(new TypeName("FooClass")).orElseThrow(Exception::new);
 
-            TargetPackage fooBarPackage = targetPackages.find(new PackageName("foo.bar")).orElseThrow(Exception::new);
+            TargetPackage fooBarPackage = exporter.find(new PackageName("foo.bar")).orElseThrow(Exception::new);
             fooBarPackage.find(new TypeName("BarClass")).orElseThrow(Exception::new);
 
-            TargetPackage fooFizzPackage = targetPackages.find(new PackageName("foo.fizz")).orElseThrow(Exception::new);
+            TargetPackage fooFizzPackage = exporter.find(new PackageName("foo.fizz")).orElseThrow(Exception::new);
             fooFizzPackage.find(new TypeName("FizzClass")).orElseThrow(Exception::new);
         }
     }

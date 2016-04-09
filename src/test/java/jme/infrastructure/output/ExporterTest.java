@@ -6,7 +6,6 @@ import jme.domain.target.method.MethodSignature;
 import jme.domain.target.method.ParameterType;
 import jme.domain.target.method.ParameterTypes;
 import jme.domain.target.method.TargetMethod;
-import jme.domain.target.method.TargetMethods;
 import jme.domain.target.pkg.PackageName;
 import jme.domain.target.pkg.TargetPackage;
 import jme.domain.target.pkg.TargetPackages;
@@ -31,12 +30,12 @@ public class ExporterTest {
     public TemporaryFolder tmpDir = new TemporaryFolder();
 
     private File rootDir;
-    private Exporter exporter;
+    private ExporterImpl exporter;
 
     @Before
     public void setUp() throws Exception {
         this.rootDir = this.tmpDir.getRoot();
-        this.exporter = new Exporter(this.rootDir);
+        this.exporter = new ExporterImpl(this.rootDir);
     }
 
     @Test
